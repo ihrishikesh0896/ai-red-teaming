@@ -1,6 +1,6 @@
 # AI Security Assessment
 
-Working documents for assessing security of AI systems. Two tracks so far:
+Working documents for assessing security of AI systems. Three tracks so far:
 
 ## Model / API security — `model_security_notes/`
 
@@ -32,3 +32,18 @@ Automate, etc.), where a non-security-trained "maker" wires an agent up to real 
    self-hosted hardening, thick-client local surface, governance/audit.
 2. **[thickclient_ai_notes/m365_copilot_studio.md](thickclient_ai_notes/m365_copilot_studio.md)**
    — M365 Copilot Studio specifics. n8n notes to follow.
+
+## MCP server security — `mcp_server_notes/`
+
+For the Model Context Protocol ecosystem — servers exposing tools/resources/prompts/sampling
+to an LLM client. Split by role, since trusting a server you connect to is a different job
+from building one:
+
+1. **[mcp_server_notes/consumer_checklist.md](mcp_server_notes/consumer_checklist.md)** —
+   provenance, tool-description poisoning, rug-pull behavior changes, cross-server shadowing,
+   injection via tool/resource output, confused-deputy tool execution, stdio-vs-remote trust,
+   sampling abuse, logging.
+2. **[mcp_server_notes/implementer_checklist.md](mcp_server_notes/implementer_checklist.md)**
+   — the same categories from the server-builder's side: supply-chain hygiene, honest tool
+   descriptions, versioning discipline, namespacing, output hygiene, least-privilege tool
+   design, stdio/remote hardening, server-side logging.
