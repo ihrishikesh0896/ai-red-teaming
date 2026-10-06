@@ -32,9 +32,3 @@ Automate, etc.), where a non-security-trained "maker" wires an agent up to real 
    self-hosted hardening, thick-client local surface, governance/audit.
 2. **[thickclient_ai_notes/m365_copilot_studio.md](thickclient_ai_notes/m365_copilot_studio.md)**
    — M365 Copilot Studio specifics. n8n notes to follow.
-
-## Brainstorming / source material — `internal_docs/`
-
-* **[internal_docs/draft_model_security.md](internal_docs/draft_model_security.md)** — original
-  raw notes `model_security_notes/` was distilled from; kept for reference/citations (OWASP,
-  NIST, Microsoft, NVIDIA links).
