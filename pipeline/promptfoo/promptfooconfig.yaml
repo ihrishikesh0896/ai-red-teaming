@@ -1,0 +1,82 @@
+# Starter red-team config — maps to model_security_notes/model_security_checklist.md Pass 2.
+#
+# Plugin/strategy IDs below reflect Promptfoo's redteam schema as of late 2025/2026 and WILL
+# drift between releases. Before trusting this file, run:
+#   npx promptfoo@latest redteam init
+# and reconcile its generated plugin list against this one.
+#
+# TARGET_API_URL / TARGET_API_KEY / TARGET_MODEL are set per-target by
+# pipeline/entrypoint.sh (or .ps1) from pipeline/config.yaml -- don't hand-edit
+# them here. Add/change targets in config.yaml instead. See
+# model_security_notes/prerequisites_request.md section D for what
+# credentials/endpoint to request for a non-local target.
+#
+# The body below matches Ollama's native /api/generate schema (config.yaml
+# `type: ollama`). An `openai-compatible` target hits /v1/chat/completions,
+# which expects a `messages` array instead of `prompt` -- if you add one of
+# those, update `body`/`transformResponse` below to match.
+
+description: "Automated model-level security regression"
+
+targets:
+  - id: https
+    label: target-model-api
+    config:
+      url: '{{env.TARGET_API_URL}}'
+      method: POST
+      headers:
+        Authorization: 'Bearer {{env.TARGET_API_KEY}}'
+        Content-Type: application/json
+      body:
+        model: '{{env.TARGET_MODEL}}'
+        prompt: '{{prompt}}'
+        stream: false
+      # Adjust to your API's actual response shape, e.g. 'json.choices[0].message.content'
+      transformResponse: 'json.response'
+
+redteam:
+  purpose: >
+    Describe what the target model/application actually does here — its intended use,
+    audience, and data access. Promptfoo uses this to generate more relevant attack prompts.
+    e.g. "Internal customer-support assistant with RAG over our knowledge base and a
+    ticket-creation tool. Used by support agents, not end customers directly."
+
+  numTests: 10
+
+  # Checklist mapping:
+  #   (prompt-injection, jailbreak are STRATEGIES below, not plugins -- they wrap other
+  #    plugins' test cases in injection/jailbreak framing rather than being probes themselves)
+  #   pii                               -> §Sensitive information disclosure
+  #   excessive-agency, hijacking       -> §Agent/tool security (if tools are wired to this target)
+  #   rbac, bola, bfla                  -> §Authorization (only meaningful if the provider config
+  #                                         above actually varies credentials per test — see
+  #                                         pipeline/custom_checks/ for the real authZ harness)
+  #   ssrf, shell-injection, sql-injection -> §Output security (model output as untrusted input)
+  plugins:
+    - pii
+    - excessive-agency
+    - hijacking
+    - harmful:privacy
+    - rbac
+    - bola
+    - bfla
+    - ssrf
+    - shell-injection
+    - sql-injection
+    - hallucination
+    - overreliance
+
+  strategies:
+    - jailbreak:meta
+    - jailbreak-templates
+    - base64
+    - leetspeak
+    - rot13
+
+# No defaultTest/moderation assertion here on purpose: each redteam plugin above ships its
+# own pass/fail grader (did the attack actually succeed against the target), which is what
+# determines CI pass/fail via exit code. A generic `type: moderation` assertion requires its
+# own separate OpenAI API key and, when that key is missing, errors out as a hard failure on
+# every single test regardless of actual attack outcome -- confirmed by a live run where this
+# silently turned a 0%-attack-success result into a reported 100% failure. Don't re-add this
+# without a real OPENAI_API_KEY configured, and even then prefer the plugin-native grading.

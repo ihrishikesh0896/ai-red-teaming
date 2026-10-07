@@ -1,0 +1,38 @@
+# Single source of truth for what this pipeline scans.
+#
+# Edit THIS file (and pipeline/.env for secrets) to point the pipeline at new
+# targets — do not hand-edit promptfoo/promptfooconfig.yaml or the module
+# scripts themselves. entrypoint.sh / entrypoint.ps1 read this file once per
+# run and export the right env vars before invoking each module.
+#
+# Add more entries under `targets:` to scan additional models/APIs/hosts —
+# every enabled module below runs against each enabled target in turn.
+
+targets:
+  - id: local-ollama
+    enabled: true
+    type: ollama                    # ollama | openai-compatible | custom-http
+    base_url: http://localhost:11434
+    model: qwen2.5:7b                # must already be pulled — check with `ollama list`
+    api_key_env: ""                  # name of an env var in .env holding a bearer token; blank = no auth
+
+  # Example of a second target — copy/edit, no code changes needed elsewhere.
+  # - id: staging-api
+  #   enabled: false
+  #   type: openai-compatible
+  #   base_url: https://staging.example.com
+  #   model: gpt-4o-mini
+  #   api_key_env: STAGING_API_KEY   # must exist in .env
+
+modules:
+  promptfoo:
+    enabled: true
+    config: promptfoo/promptfooconfig.yaml
+    extra_args: []
+
+  modelscan:
+    enabled: false
+    artifact_path: ""                # path or URI to the model artifact; required if enabled
+
+  custom_checks:
+    enabled: false                   # templates only, not automated yet — see custom_checks/README.md
