@@ -1,0 +1,43 @@
+name: AI Security Checks
+
+on:
+  pull_request:
+    paths:
+      - 'pipeline/**'
+  schedule:
+    - cron: '0 3 * * *'  # nightly — model behavior can drift even without a code change
+  workflow_dispatch: {}
+
+jobs:
+  promptfoo-redteam:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run Promptfoo red team
+        working-directory: pipeline/promptfoo
+        env:
+          TARGET_API_URL: ${{ secrets.TARGET_API_URL }}
+          TARGET_API_KEY: ${{ secrets.TARGET_API_KEY }}
+        run: npx promptfoo@latest redteam run -c promptfooconfig.yaml
+
+  modelscan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install modelscan
+        run: pip install modelscan
+      - name: Scan model artifact
+        run: |
+          # TODO: replace with how your pipeline actually fetches the artifact to scan
+          # (e.g. download from your model registry) before running:
+          ./pipeline/modelscan/run_modelscan.sh "${MODEL_ARTIFACT_PATH:?set this}"
+
+# custom_checks/ is intentionally NOT wired in here -- see pipeline/custom_checks/README.md
+# for why. Add a job for it yourself once those scripts are filled in and scoped to a
+# dedicated non-prod test environment.

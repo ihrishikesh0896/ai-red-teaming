@@ -1,2 +1,5 @@
 internal_docs/
 .claude/
+pipeline/.env
+pipeline/results/
+pipeline/**/__pycache__/
