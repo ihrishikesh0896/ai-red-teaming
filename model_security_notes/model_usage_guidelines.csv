@@ -1,0 +1,53 @@
+ID,Section,Type,Requirement,Applies To,Reference / Notes
+MUG-01,Scope,Rule,"Applies to all employees, contractors, and vendors acting on the org's behalf",Everyone,
+MUG-02,Scope,Rule,"Covers third-party AI tools (web chat, browser extensions, IDE plugins, AI features inside SaaS), model APIs, and internally hosted/fine-tuned models",Everyone,
+MUG-03,Scope,Rule,"A SaaS vendor switching on an AI feature counts as a new tool, not a product update",Everyone,
+MUG-04,Approved Tools Register,Rule,"Use only tools on the approved register, regardless of whether the tool is free or personal",Everyone,
+MUG-05,Approved Tools Register,Register entry,"[Enterprise chat assistant] | Tier: Enterprise (SSO, no training on inputs) | Max classification: Confidential | Uses: general drafting, analysis, code | Contract: DPA, retention, no-train checked",Everyone,Placeholder - replace with org tools
+MUG-06,Approved Tools Register,Register entry,[Coding assistant] | Tier: Enterprise | Max classification: Internal + source code | Uses: code completion/review in approved repos | Contract: checked,Engineering,Placeholder - replace with org tools
+MUG-07,Approved Tools Register,Register entry,[Self-hosted model] | Tier: Internal | Max classification: Restricted (per model card) | Uses: per model card intended use,Everyone,model_card_template.md
+MUG-08,Approved Tools Register,Register entry,Consumer/personal accounts of any tool | Not approved | Max classification: Public only | Uses: nothing involving org data,Everyone,
+MUG-09,Approved Tools Register,Process,"New tool requests go through [process/form]; security review covers retention, training-on-inputs, residency, SSO, audit logging, sub-processors",Everyone,Placeholder
+MUG-10,Approved Tools Register,Rule,"Enterprise and consumer tiers of the same product are different tools - approval is for the contract, not the brand",Everyone,
+MUG-11,Data Handling,Rule,"If you wouldn't email it to the vendor, don't paste it into their model",Everyone,
+MUG-12,Data Handling,Classification matrix,Public: consumer/unapproved = Yes; approved enterprise = Yes; internally hosted = Yes,Everyone,
+MUG-13,Data Handling,Classification matrix,Internal: consumer/unapproved = No; approved enterprise = Yes; internally hosted = Yes,Everyone,
+MUG-14,Data Handling,Classification matrix,"Confidential (customer data, financials, unreleased plans, source code): consumer/unapproved = No; approved enterprise = Only if register allows; internally hosted = If deployment approved",Everyone,
+MUG-15,Data Handling,Classification matrix,"Restricted (credentials, secrets, PHI, PCI, government IDs): consumer/unapproved = No; approved enterprise = No; internally hosted = No unless explicitly approved per deployment",Everyone,
+MUG-16,Data Handling,Never in a prompt,"Passwords, API keys, tokens, private keys, connection strings - including in pasted logs, configs, or stack traces",Everyone,
+MUG-17,Data Handling,Never in a prompt,Customer/employee personal data beyond what the approved use strictly needs,Everyone,
+MUG-18,Data Handling,Never in a prompt,Data contractually or legally barred from third-party sharing (check customer contracts and NDAs),Everyone,
+MUG-19,Data Handling,Never in a prompt,Material under legal hold or privilege,Everyone,
+MUG-20,Data Handling,Rule,"Attachments, screenshots, voice, and Drive/email integrations count as prompts; connecting a mailbox or file store grants access to everything that account can read",Everyone,
+MUG-21,Acceptable Use,Permitted,"Drafting/editing, summarizing shareable documents, brainstorming, code assistance, research starting points, translation, analysis on appropriately classified data (approved tools only)",Everyone,
+MUG-22,Acceptable Use,Prohibited,"Making or fully automating significant decisions about people (hiring, firing, ratings, credit, individual pricing, eligibility) without documented human review and Legal sign-off",Everyone,
+MUG-23,Acceptable Use,Prohibited,"Impersonating a real person, or presenting content as human-written where disclosure is required",Everyone,See Transparency & Disclosure
+MUG-24,Acceptable Use,Prohibited,Circumventing tool safety controls or org guardrails outside an authorized red-team engagement,Everyone,rules_of_engagement.md
+MUG-25,Acceptable Use,Prohibited,"Using AI to violate any existing policy (harassment, discrimination, IP, export control, security) - 'the model wrote it' is not an exception",Everyone,
+MUG-26,Acceptable Use,Prohibited,Uploading third-party copyrighted/licensed material in ways the license doesn't permit,Everyone,
+MUG-27,Output Verification,Rule,The person who uses AI output is accountable for it,Everyone,
+MUG-28,Output Verification,Check,"Verify facts, citations, numbers, and legal/medical/financial claims against a primary source",Everyone,
+MUG-29,Output Verification,Check,"Review AI code like a stranger's PR: hardcoded secrets, injection flaws, insecure defaults, invented/typosquatted packages, licensing of reproduced snippets; normal code review and CI scanning apply",Engineering,
+MUG-30,Output Verification,Check,Human review of customer-facing content before sending or publishing,Everyone,
+MUG-31,Output Verification,Check,"Read commands and scripts before running, especially anything touching production, deleting data, or changing permissions",Everyone,
+MUG-32,Transparency & Disclosure,Rule,Disclose AI involvement where readers would reasonably expect it and wherever law or contract requires (e.g. customer-facing chatbots identify as AI; [jurisdiction-specific e.g. EU AI Act]),Everyone,Placeholder
+MUG-33,Transparency & Disclosure,Rule,"Don't present AI-generated work as solely your own where authorship matters (publications, legal filings, academic work, formal reports)",Everyone,
+MUG-34,Transparency & Disclosure,Rule,AI-generated images/audio/video depicting real people require [Legal/Comms] approval,Everyone,Placeholder
+MUG-35,Agents & Automation,Check,Agents/automations with write access to org systems need security review before go-live,Builders,../thickclient_ai_notes/checklist.md
+MUG-36,Agents & Automation,Check,"Run agents under a scoped service identity, not a personal account",Builders,
+MUG-37,Agents & Automation,Check,Human approval step for irreversible or external-facing actions,Builders,
+MUG-38,Agents & Automation,Check,"MCP servers, plugins, and extensions follow the same approval process as tools",Everyone,../mcp_server_notes/consumer_checklist.md
+MUG-39,Agents & Automation,Check,Treat all content the model reads as potentially carrying instructions; agents shouldn't hold more privilege than their least-trusted input,Builders,
+MUG-40,Building with Models,Check,"API keys in a secrets manager, per-environment, rotated; never in code, notebooks, or client-side bundles",Engineering,
+MUG-41,Building with Models,Check,Use org-managed accounts/billing for model APIs - no personal keys on company work,Engineering,
+MUG-42,Building with Models,Check,Complete the pre-deployment checklist and a model card before hosting or exposing a model,Engineering,pre_deployment_checklist.md; model_card_template.md
+MUG-43,Building with Models,Check,Download open-weight models only from official sources and scan before loading - model files can execute code,Engineering,pipeline/modelscan/
+MUG-44,Building with Models,Check,Spending limits and usage alerts set on every API account,Engineering,
+MUG-45,Incidents & Reporting,Report,Pasted restricted/confidential data into an unapproved tool (early reporting enables deletion requests; not a disciplinary trap),Everyone,Report to [security contact]
+MUG-46,Incidents & Reporting,Report,Model output leaks other users' or org data,Everyone,Report to [security contact]
+MUG-47,Incidents & Reporting,Report,An agent or integration took an unintended action,Everyone,Report to [security contact]
+MUG-48,Incidents & Reporting,Report,Jailbreak or guardrail bypass found in an org-deployed model,Everyone,Report to [security contact]
+MUG-49,Incidents & Reporting,Report,A team is using an unapproved AI tool on org data,Everyone,Report to [security contact]
+MUG-50,Training & Acknowledgment,Rule,Complete [AI usage training] before access to approved tools; refresh annually,Everyone,Placeholder
+MUG-51,Training & Acknowledgment,Rule,Annual policy acknowledgment tracked by [HR/GRC],Everyone,Placeholder
+MUG-52,Training & Acknowledgment,Rule,Violations handled under existing [acceptable use/disciplinary] policy,Everyone,Placeholder
